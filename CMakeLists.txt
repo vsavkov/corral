@@ -52,6 +52,7 @@ option(
     "include path for Catch2 (or Git repository URL)"
     "https://github.com/catchorg/catch2"
 )
+set(CORRAL_CATCH2 "https://github.com/catchorg/catch2")
 
 if("${CORRAL_CATCH2}" MATCHES ".*://.*")
     include(FetchContent)
@@ -78,35 +79,72 @@ add_test(NAME corral_basic_test COMMAND ${CORRAL_TEST_RUNNER} corral_basic_test)
 # ASIO interaction
 #
 
-option(CORRAL_BOOST "include path for boost (or Git repository URL)" "")
+set(BOOST_ROOT "/opt/homebrew/Cellar/boost/1.86.0_2")
+message(STATUS "BOOST_ROOT is: ${BOOST_ROOT}")
 
-if(NOT ("${CORRAL_BOOST}" STREQUAL ""))
-    if("${CORRAL_BOOST}" MATCHES ".*://.*")
-        FetchContent_Declare(
-            Boost
-            GIT_REPOSITORY "${CORRAL_BOOST}"
-            GIT_TAG boost-1.80.0
-        )
-        FetchContent_MakeAvailable(Boost)
-    else()
-        set(Boost_INCLUDE_DIR "${CORRAL_BOOST}")
-        find_package(Boost 1.77.0 REQUIRED)
-    endif()
+set(Boost_INCLUDE_DIR ${BOOST_ROOT}/include)
+message(STATUS "Boost_INCLUDE_DIR is: ${Boost_INCLUDE_DIR}")
 
-    add_executable(corral_asio_test test/asio_test.cc test/helpers.h)
-    target_link_libraries(corral_asio_test PRIVATE corral Catch2::Catch2)
-    target_compile_definitions(corral_asio_test PRIVATE CATCH_CONFIG_MAIN)
+set(Boost_LIBRARY_DIR ${BOOST_ROOT}/lib)
+message(STATUS "Boost_LIBRARY_DIR is: ${Boost_LIBRARY_DIR}")
 
-    if("${CORRAL_TEST_RUNNER}" STREQUAL "")
-        find_package(OpenSSL)
-        if(OpenSSL_FOUND)
-            target_compile_definitions(corral_asio_test PRIVATE CORRAL_HAVE_OPENSSL)
-            target_link_libraries(corral_asio_test PRIVATE OpenSSL::SSL OpenSSL::Crypto)
-        endif()
-    endif()
+#set(Boost_VERSION_HPP "${BOOST_INCLUDE_DIR}/boost/version.hpp")
+set(Boost_VERSION_HPP ${BOOST_ROOT}/include/boost/version.hpp)
+message(STATUS "Boost_VERSION_HPP is: ${Boost_VERSION_HPP}")
 
-    add_test(NAME corral_asio_test COMMAND ${CORRAL_TEST_RUNNER} corral_asio_test)
+if(EXISTS ${Boost_VERSION_HPP})
+    file(READ ${Boost_VERSION_HPP} boost_version_content)
+    string(REGEX MATCH "#define BOOST_LIB_VERSION \".*\"" lib_version_line "${boost_version_content}")
+    string(REGEX REPLACE "#define BOOST_LIB_VERSION \"(.*)\"" "\\1" Boost_VERSION "${lib_version_line}")
+else()
+    set(Boost_VERSION "UNKNOWN")
 endif()
+message(STATUS "Boost_VERSION is: ${Boost_VERSION}")
+
+#find_package(Boost 1.86.0 REQUIRED)
+#find_package(Boost REQUIRED)
+#message(STATUS "Boost_VERSION is: ${Boost_VERSION}")
+#message(STATUS "Boost_INCLUDE_DIR is: ${Boost_INCLUDE_DIR}")
+#message(STATUS "Boost_LIBRARY_DIR is: ${Boost_LIBRARY_DIR}")
+
+add_executable(corral_asio_test test/asio_test.cc test/helpers.h)
+target_include_directories(corral_asio_test PRIVATE "${Boost_INCLUDE_DIR}")
+target_link_libraries(corral_asio_test PRIVATE corral Catch2::Catch2)
+target_compile_definitions(corral_asio_test PRIVATE CATCH_CONFIG_MAIN)
+add_test(NAME corral_asio_test COMMAND ${CORRAL_TEST_RUNNER} corral_asio_test)
+
+#option(CORRAL_BOOST "include path for boost (or Git repository URL)" "")
+#set(CORRAL_BOOST "/usr/local/include")
+#
+#if(NOT ("${CORRAL_BOOST}" STREQUAL ""))
+#    if("${CORRAL_BOOST}" MATCHES ".*://.*")
+#        FetchContent_Declare(
+#            Boost
+#            GIT_REPOSITORY "${CORRAL_BOOST}"
+#            GIT_TAG boost-1.80.0
+#        )
+#        FetchContent_MakeAvailable(Boost)
+#    else()
+#        set(Boost_INCLUDE_DIR "${CORRAL_BOOST}")
+##        find_package(Boost 1.77.0 REQUIRED)
+#    endif()
+#
+#    set(Boost_INCLUDE_DIR "/usr/local/include")
+#
+#    add_executable(corral_asio_test test/asio_test.cc test/helpers.h)
+#    target_link_libraries(corral_asio_test PRIVATE corral Catch2::Catch2)
+#    target_compile_definitions(corral_asio_test PRIVATE CATCH_CONFIG_MAIN)
+#
+#    if("${CORRAL_TEST_RUNNER}" STREQUAL "")
+#        find_package(OpenSSL)
+#        if(OpenSSL_FOUND)
+#            target_compile_definitions(corral_asio_test PRIVATE CORRAL_HAVE_OPENSSL)
+#            target_link_libraries(corral_asio_test PRIVATE OpenSSL::SSL OpenSSL::Crypto)
+#        endif()
+#    endif()
+#
+#    add_test(NAME corral_asio_test COMMAND ${CORRAL_TEST_RUNNER} corral_asio_test)
+#endif()
 
 
 #
@@ -122,7 +160,8 @@ install(TARGETS corral EXPORT corralTargets
 #
 # Examples
 #
-option(CORRAL_EXAMPLES "Build examples" OFF)
+option(CORRAL_EXAMPLES "Build examples" ON)
+set(CORRAL_EXAMPLES ON)
 if(CORRAL_EXAMPLES)
     add_subdirectory(examples)
 endif()

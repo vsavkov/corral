@@ -1,21 +1,33 @@
-
 add_executable(asio_hello_world asio_hello_world.cc)
-target_link_libraries(asio_hello_world PRIVATE corral Boost::asio)
+target_include_directories(asio_hello_world PRIVATE "${Boost_INCLUDE_DIR}")
+target_link_directories(asio_hello_world PRIVATE ${Boost_LIBRARY_DIR})
+#target_link_libraries(asio_hello_world PRIVATE corral Boost::asio)
+target_link_libraries(asio_hello_world PRIVATE corral)
 
 add_executable(asio_echo_server asio_echo_server.cc)
-target_link_libraries(asio_echo_server PRIVATE corral Boost::asio)
+target_include_directories(asio_echo_server PRIVATE "${Boost_INCLUDE_DIR}")
+target_link_directories(asio_echo_server PRIVATE ${Boost_LIBRARY_DIR})
+#target_link_libraries(asio_echo_server PRIVATE corral Boost::asio)
+target_link_libraries(asio_echo_server PRIVATE corral)
 
 add_executable(asio_netcat asio_netcat.cc)
-target_link_libraries(asio_netcat PRIVATE corral Boost::asio)
+target_include_directories(asio_netcat PRIVATE "${Boost_INCLUDE_DIR}")
+target_link_directories(asio_netcat PRIVATE ${Boost_LIBRARY_DIR})
+#target_link_libraries(asio_netcat PRIVATE corral Boost::asio)
+target_link_libraries(asio_netcat PRIVATE corral)
 
 add_executable(asio_http_downloader asio_http_downloader.cc)
-target_link_libraries(asio_http_downloader PRIVATE corral Boost::asio)
+target_include_directories(asio_http_downloader PRIVATE "${Boost_INCLUDE_DIR}")
+target_link_directories(asio_http_downloader PRIVATE ${Boost_LIBRARY_DIR})
+#target_link_libraries(asio_http_downloader PRIVATE corral Boost::asio)
+target_link_libraries(asio_http_downloader PRIVATE corral)
 
 add_executable(asio_happy_eyeballs asio_happy_eyeballs.cc)
-target_link_libraries(asio_happy_eyeballs PRIVATE corral Boost::asio)
+target_include_directories(asio_happy_eyeballs PRIVATE "${Boost_INCLUDE_DIR}")
+target_link_directories(asio_happy_eyeballs PRIVATE ${Boost_LIBRARY_DIR})
+#target_link_libraries(asio_happy_eyeballs PRIVATE corral Boost::asio)
+target_link_libraries(asio_happy_eyeballs PRIVATE corral)
 
-
-find_package(Qt6 REQUIRED COMPONENTS Core Network)
-qt_add_executable(qt_echo_server qt_echo_server.cc)
-target_link_libraries(qt_echo_server PRIVATE corral Qt6::Core Qt6::Network)
-
+#find_package(Qt6 REQUIRED COMPONENTS Core Network)
+#qt_add_executable(qt_echo_server qt_echo_server.cc)
+#target_link_libraries(qt_echo_server PRIVATE corral Qt6::Core Qt6::Network)
